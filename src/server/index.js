@@ -8,7 +8,12 @@ const PORT = process.env.PORT || 9000
 const DEPOSIT_AMOUNT = 100
 const WINNING_AMOUNT = 10
 
-const account = MemoryAccount()
+const account = MemoryAccount({
+  keypair: {
+    publicKey: process.env.PUBLIC_KEY,
+    secretKey: process.env.SECRET_KEY
+  }
+})
 
 const app = express()
 app.use(bodyParser.json())
