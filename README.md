@@ -9,7 +9,7 @@ There are some things to consider and set up before being able to play Gomuku. H
 
 - Epoch
 - Accounts
-- Tokens
+- ættos
 
 ## Requirements
 
@@ -33,9 +33,9 @@ The minimum requirement for being able to play the Gomuku game are two. One acco
 After setting up both accounts you need to replace the public key and private key in src/client/index.js with keys belonging to one of the accounts (client or server).
 
 
-### Tokens
+### ættos
 
-Make sure that you've at least 100 tokens on each account. For more information how to get some ættos for testing purposes like playing the Gomuku game, go to [this](https://forum.aeternity.com/t/get-some-aettos-for-testing-purposes/1754/21) forum post. 
+Make sure that you've at least 100 ættos on each account. For more information how to get some ættos for testing purposes like playing the Gomuku game, go to [this](https://forum.aeternity.com/t/get-some-aettos-for-testing-purposes/1754/21) forum post. 
 
 
 ## Installation and Running
