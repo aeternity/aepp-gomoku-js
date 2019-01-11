@@ -7,6 +7,7 @@ Welcome to the official Gomuku Game Guide! Here you’ll find the basics on how 
 ### Getting Started
 There are some things to consider and set up before being able to play Gomuku. Here are the three main requirements, so you can get started right away:
 
+- Node.JS (v8.0.0)
 - Epoch
 - Accounts
 - ættos
