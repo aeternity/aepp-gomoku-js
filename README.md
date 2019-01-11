@@ -36,7 +36,7 @@ After setting up both accounts you need to replace the public key and private ke
 
 ### ættos
 
-Make sure that you've at least 100 ættos on each account. For more information how to get some ættos for testing purposes like playing the Gomuku game, go to [this](https://forum.aeternity.com/t/get-some-aettos-for-testing-purposes/1754/21) forum post. 
+Make sure that you've at least 30000 ættos on each account (for deposit and transaction fees). For more information how to get some ættos for testing purposes like playing the Gomuku game, go to [this](https://forum.aeternity.com/t/get-some-aettos-for-testing-purposes/1754/21) forum post. 
 
 
 ## Installation and Running
