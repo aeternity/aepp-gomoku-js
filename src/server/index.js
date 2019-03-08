@@ -1,11 +1,13 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { Channel, Universal } from '@aeternity/aepp-sdk'
+import { Channel, Universal, TxBuilder } from '@aeternity/aepp-sdk'
 import Model from '../gomoku/AppModel'
 import config from '../config'
 
 const PORT = process.env.PORT || 9000
+
+const { unpackTx } = TxBuilder
 
 ;(async () => {
   const account = await Universal({
@@ -37,11 +39,25 @@ const PORT = process.env.PORT || 9000
       port: 3333,
       lockPeriod: 10
     }
+    let initiatorAmount = config.deposit
+    let responderAmount = config.deposit
     const channel = await Channel({
       ...sharedParams,
       role: 'initiator',
       async sign (tag, tx) {
-        return account.signTransaction(tx)
+        const { txType, tx: txData } = unpackTx(tx)
+        if (tag === 'shutdown_sign_ack') {
+          const fee = Number(txData.fee) / 2
+          if (
+            txType === 'channelCloseMutual' &&
+            Number(txData.initiatorAmountFinal) === (initiatorAmount - fee) &&
+            Number(txData.responderAmountFinal) === (responderAmount - fee)
+          ) {
+            return account.signTransaction(tx)
+          }
+        } else {
+          return account.signTransaction(tx)
+        }
       }
     })
 
@@ -80,6 +96,8 @@ const PORT = process.env.PORT || 9000
               Number(config.reward),
               async (tx) => await account.signTransaction(tx)
             )
+            initiatorAmount -= Number(config.reward)
+            responderAmount += Number(config.reward)
           }
           sendMessage({
             type: 'MOVE',
@@ -93,6 +111,8 @@ const PORT = process.env.PORT || 9000
               Number(config.reward),
               async (tx) => await account.signTransaction(tx)
             )
+            initiatorAmount += Number(config.reward)
+            responderAmount -= Number(config.reward)
           }
           break
       }

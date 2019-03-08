@@ -2,11 +2,20 @@
   <ae-main>
     <div class="flex-col content-center min-h-screen">
       <div class="mx-auto w-full text-center">
-        <ae-backdrop v-if="!isChannelOpen">
+        <ae-backdrop v-if="isOpeningChannel">
           <div class="mb-2">
             <ae-loader />
           </div>
           <ae-text>Opening state channel</ae-text>
+        </ae-backdrop>
+        <ae-backdrop v-if="isClosingChannel">
+          <div class="mb-2">
+            <ae-loader />
+          </div>
+          <ae-text>Closing state channel</ae-text>
+        </ae-backdrop>
+        <ae-backdrop v-if="isClosed">
+          <ae-text weight="bold">State channel closed</ae-text>
         </ae-backdrop>
         <div class="flex my-4">
           <div class="w-1/2">
@@ -34,7 +43,7 @@
         </div>
         <div id="gomoku"></div>
         <div class="mt-4">
-          <ae-button face="round" fill="neutral">Close channel</ae-button>
+          <ae-button face="round" fill="neutral" v-bind:disabled="isOpeningChannel" @click="closeChannel()">Close channel</ae-button>
         </div>
       </div>
     </div>
@@ -56,38 +65,57 @@ export default {
   components: {},
   data() {
     return {
-      isChannelOpen: false,
+      isOpeningChannel: true,
+      isClosingChannel: false,
       isPlaying: false,
+      isClosed: false,
       initiatorAddress: '',
       responderAddress: '',
       initiatorAmount: 0,
-      responderAmount: 0
+      responderAmount: 0,
+      channel: null,
+      account: null
     }
   },
   methods: {
     newGame (player) {
       this.controller.newGame(player)
       this.isPlaying = true
+    },
+    async closeChannel () {
+      this.isClosingChannel = true
+      await this.channel.shutdown(async (tx) => {
+        const { txType, tx: txData } = unpackTx(tx)
+        const fee = Number(txData.fee) / 2
+        if (
+          Number(txData.initiatorAmountFinal) === (this.initiatorAmount - fee) &&
+          Number(txData.responderAmountFinal) === (this.responderAmount - fee)
+        ) {
+          return this.account.signTransaction(tx)
+        }
+      })
+      this.isClosingChannel = false
+      this.isClosed = true
     }
   },
   async mounted () {
     const model = new AppModel()
     const view = new AppView(model)
-    const account = await Universal({
+    this.account = await Universal({
       url: config.url,
       internalUrl: config.internalUrl,
       networkId: config.networkId,
       keypair: config.keypair
     })
     const { data: sharedParams } = await axios.post(
-      `http://localhost:9000/start/${await account.address()}`
+      `http://localhost:9000/start/${await this.account.address()}`
     )
     this.initiatorAddress = sharedParams.initiatorId
     this.responderAddress = sharedParams.responderId
-    const channel = await Channel({
+    this.channel = await Channel({
       ...sharedParams,
       role: 'responder',
-      sign (tag, tx) {
+      sign: (tag, tx) => {
         const { txType, tx: txData } = unpackTx(tx)
         if (tag === 'responder_sign') {
           if (
@@ -95,7 +123,7 @@ export default {
             Number(txData.initiatorAmount) === config.deposit &&
             Number(txData.responderAmount) === config.deposit
           ) {
-            return account.signTransaction(tx)
+            return this.account.signTransaction(tx)
           }
         }
         if (tag === 'update_ack') {
@@ -106,32 +134,29 @@ export default {
             Number(txData.updates[0].tx.amount) === config.reward &&
             model.winner() === 2
           ) {
-            return account.signTransaction(tx)
+            return this.account.signTransaction(tx)
           }
         }
       }
     })
-
-    function sendMessage (message) {
-      channel.sendMessage(message, sharedParams.initiatorId)
-    }
-
-    this.controller = new AppController(model, view, channel, sendMessage)
-    this.controller.init()
-
-    channel.on('statusChanged', (status) => {
+    this.channel.on('statusChanged', (status) => {
       if (status === 'open') {
-        this.isChannelOpen = true
+        this.isOpeningChannel = false
         this.isPlaying = true
       }
     })
-    channel.on('stateChanged', async () => {
+    this.channel.on('stateChanged', async () => {
       this.isPlaying = model.playing
       const { initiatorId, responderId } = sharedParams
-      const balances = await channel.balances([initiatorId, responderId])
+      const balances = await this.channel.balances([initiatorId, responderId])
       this.initiatorAmount = balances[initiatorId]
       this.responderAmount = balances[responderId]
     })
+    const sendMessage = (message) => {
+      this.channel.sendMessage(message, sharedParams.initiatorId)
+    }
+    this.controller = new AppController(model, view, this.channel, sendMessage)
+    this.controller.init()
   }
 }
 </script>
