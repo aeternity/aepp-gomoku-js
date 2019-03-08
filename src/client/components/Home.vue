@@ -22,14 +22,14 @@
             <div class="flex">
               <ae-identicon :address="initiatorAddress" />
               <div class="ml-2 mt-2 text-left">
-                <ae-amount v-bind:value="initiatorAmount" unit="Æ" />
+                <ae-amount v-bind:value="(initiatorAmount / 1000000000000000000).toFixed(4)" unit="Æ" />
               </div>
             </div>
           </div>
           <div class="w-1/2">
             <div class="flex justify-end">
               <div class="mr-2 mt-2 text-left">
-                <ae-amount v-bind:value="responderAmount" unit="Æ" />
+                <ae-amount v-bind:value="(responderAmount / 1000000000000000000).toFixed(4)" unit="Æ" />
               </div>
               <ae-identicon :address="responderAddress" />
             </div>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { Channel, Universal, TxBuilder } from '@aeternity/aepp-sdk'
+import { Channel, Universal, TxBuilder, Aepp } from '@aeternity/aepp-sdk'
 import axios from 'axios'
 import AppModel from '../../gomoku/AppModel'
 import AppView from '../../gomoku/AppView'
@@ -74,7 +74,7 @@ export default {
       initiatorAmount: 0,
       responderAmount: 0,
       channel: null,
-      account: null
+      client: null
     }
   },
   methods: {
@@ -91,7 +91,7 @@ export default {
           Number(txData.initiatorAmountFinal) === (this.initiatorAmount - fee) &&
           Number(txData.responderAmountFinal) === (this.responderAmount - fee)
         ) {
-          return this.account.signTransaction(tx)
+          return this.client.signTransaction(tx)
         }
       })
       this.isClosingChannel = false
@@ -99,16 +99,11 @@ export default {
     }
   },
   async mounted () {
+    this.client = await Aepp()
     const model = new AppModel()
     const view = new AppView(model)
-    this.account = await Universal({
-      url: config.url,
-      internalUrl: config.internalUrl,
-      networkId: config.networkId,
-      keypair: config.keypair
-    })
     const { data: sharedParams } = await axios.post(
-      `http://localhost:9000/start/${await this.account.address()}`
+      `http://localhost:9000/start/${await this.client.address()}`
     )
     this.initiatorAddress = sharedParams.initiatorId
     this.responderAddress = sharedParams.responderId
@@ -123,7 +118,7 @@ export default {
             Number(txData.initiatorAmount) === config.deposit &&
             Number(txData.responderAmount) === config.deposit
           ) {
-            return this.account.signTransaction(tx)
+            return this.client.signTransaction(tx)
           }
         }
         if (tag === 'update_ack') {
@@ -134,7 +129,7 @@ export default {
             Number(txData.updates[0].tx.amount) === config.reward &&
             model.winner() === 2
           ) {
-            return this.account.signTransaction(tx)
+            return this.client.signTransaction(tx)
           }
         }
       }
