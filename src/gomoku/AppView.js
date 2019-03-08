@@ -7,34 +7,35 @@ var AppView = function(model) {
   this.ctx
   this.inputNewGameX
   this.inputNewGameO
-  ;(this.cellsize = 40),
-    (this.halfcellsize = 20),
+  ;(this.cellsize = 24),
+    (this.halfcellsize = 12),
     (this.radius = 12),
     (this.cross = 10),
     (this.crosswin = 15)
   this.color = { canvas: '#ECEABE', border: 'silver', winline: '#6A5D4D' }
   this.init = function() {
-    var body = document.getElementsByTagName('body')[0]
+    // var body = document.getElementsByTagName('body')[0]
+    var body = document.getElementById('gomoku')
     var div = document.createElement('div')
-    div.className = 'scoreboard'
-    body.appendChild(div)
-    var element = document.createElement('input')
-    element.type = 'button'
-    element.value = 'New game for X'
-    div.appendChild(element)
-    AppView.inputNewGameX = element
-    element = document.createElement('span')
-    element.innerHTML = ' or '
-    div.appendChild(element)
-    element = document.createElement('input')
-    element.type = 'button'
-    element.value = 'New game for O'
-    div.appendChild(element)
-    AppView.inputNewGameO = element
-    var balance = document.createElement('div')
-    balance.id = 'balance'
-    balance.innerHTML = 'computer = 100, player = 100'
-    div.appendChild(balance)
+    // div.className = 'scoreboard'
+    // body.appendChild(div)
+    // var element = document.createElement('input')
+    // element.type = 'button'
+    // element.value = 'New game for X'
+    // div.appendChild(element)
+    // AppView.inputNewGameX = element
+    // element = document.createElement('span')
+    // element.innerHTML = ' or '
+    // div.appendChild(element)
+    // element = document.createElement('input')
+    // element.type = 'button'
+    // element.value = 'New game for O'
+    // div.appendChild(element)
+    // AppView.inputNewGameO = element
+    // var balance = document.createElement('div')
+    // balance.id = 'balance'
+    // balance.innerHTML = 'computer = 100, player = 100'
+    // div.appendChild(balance)
     div = document.createElement('div')
     div.className = 'gameboard'
     body.appendChild(div)
@@ -42,8 +43,8 @@ var AppView = function(model) {
     div.appendChild(canvas)
     AppView.canvas = canvas
     AppView.ctx = AppView.canvas.getContext('2d')
-    AppView.canvas.height = 601
-    AppView.canvas.width = 601
+    AppView.canvas.height = 361
+    AppView.canvas.width = 361
   }
 
   this.updateBalance = function(computer, player) {

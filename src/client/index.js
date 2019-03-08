@@ -1,67 +1,23 @@
-import { Channel, Universal, TxBuilder } from '@aeternity/aepp-sdk'
-import axios from 'axios'
-import AppModel from '../gomoku/AppModel'
-import AppView from '../gomoku/AppView'
-import AppController from '../gomoku/AppController'
-import config from '../config'
+import './main.css'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import App from './App.vue'
+import getRouter from './router'
+import store from './store'
+import Components from '@aeternity/aepp-components'
 
-const { unpackTx } = TxBuilder
+import '@aeternity/aepp-components/dist/aepp.global.css'
+import '@aeternity/aepp-components/dist/aepp.fonts.css'
+import '@aeternity/aepp-components/dist/aepp.components.css'
 
-;(async () => {
-  const account = await Universal({
-    url: config.url,
-    internalUrl: config.internalUrl,
-    networkId: config.networkId,
-    keypair: config.keypair
-  })
-  const model = new AppModel()
-  const view = new AppView(model)
-  const { data: sharedParams } = await axios.post(
-    `http://localhost:9000/start/${await account.address()}`
-  )
+Vue.config.productionTip = false
+Vue.use(VueRouter)
+Vue.use(Components)
 
-  async function updateBalances () {
-    const { initiatorId, responderId } = sharedParams
-    const balances = await channel.balances([initiatorId, responderId])
-    view.updateBalance(balances[initiatorId], balances[responderId])
-  }
-
-  const channel = await Channel({
-    ...sharedParams,
-    role: 'responder',
-    sign (tag, tx) {
-      const { txType, tx: txData } = unpackTx(tx)
-      if (tag === 'responder_sign') {
-        if (
-          txType === 'channelCreate' &&
-          Number(txData.initiatorAmount) === config.deposit &&
-          Number(txData.responderAmount) === config.deposit
-        ) {
-          return account.signTransaction(tx)
-        }
-      }
-      if (tag === 'update_ack') {
-        if (
-          txData.updates.length === 1 &&
-          txData.updates[0].tx.from === sharedParams.responderId &&
-          txData.updates[0].tx.to === sharedParams.initiatorId &&
-          Number(txData.updates[0].tx.amount) === config.reward &&
-          model.winner() === 2
-        ) {
-          return account.signTransaction(tx)
-        }
-      }
-    }
-  })
-
-  function sendMessage (message) {
-    channel.sendMessage(message, sharedParams.initiatorId)
-  }
-
-  // eslint-disable-next-line no-new
-  new AppController(model, view, channel, sendMessage)
-
-  channel.on('statusChanged', status => console.log('CHANNEL_STATUS', status))
-  channel.on('onChainTx', tx => console.log('ONCHAIN_TX', tx))
-  channel.on('stateChanged', () => updateBalances())
-})()
+console.info('about to render Vue App')
+new Vue({
+  router: getRouter(store),
+  store,
+  render: h => h(App),
+  beforeCreate () {}
+}).$mount('#app')
