@@ -1,5 +1,5 @@
 # Gomuku Game Guide
------
+
 ## Welcome
 
 Welcome to the official Gomuku Game Guide! Here you’ll find the basics on how to set up everything to get the game started.
@@ -21,9 +21,8 @@ Before starting to set up the game you need to run an Epoch node on port ```3001
 ````
 git clone https://github.com/aeternity/epoch.git
 cd epoch
-IMAGE_TAG=v0.25.0 docker-compose up -d
+IMAGE_TAG=v2.0.0 docker-compose up -d
 ````
-Please note that this project **doesn't work with epoch v1.0.0** (you can use v0.25.0) currently.
 
 In case you want to see a **video tutorial**, how to run an æternity Node on macOS Mojave, please feel free to watch it [here](https://youtu.be/J3Ai97eS6Bo).
 
@@ -31,13 +30,38 @@ In case you want to see a **video tutorial**, how to run an æternity Node on ma
 
 The minimum requirement for being able to play the Gomuku game are two. One account will be for the client and one for the server. In case you still haven't got any æternity account, go to [TUTORIAL: How to Create an æternity Account With CLI?](https://dev.aepps.com/tutorials/account-creation-in-ae-cli.html)
 
-After setting up both accounts you need to replace the public key and private key in src/client/index.js with keys belonging to one of the accounts (client or server).
+After setting up both accounts you need to replace the public key and private key in src/config.js with keys belonging to one of the accounts (client or server).
 
 
 ### ættos
 
-Make sure that you've at least 30000 ættos on each account (for deposit and transaction fees). For more information how to get some ættos for testing purposes like playing the Gomuku game, go to [this](https://forum.aeternity.com/t/get-some-aettos-for-testing-purposes/1754/21) forum post. 
+Make sure that you've at least 200000000000000000 ættos (0.2 AE) on each account (for deposit and transaction fees). For more information how to get some ættos for testing purposes like playing the Gomuku game, go to [this](https://forum.aeternity.com/t/get-some-aettos-for-testing-purposes/1754/21) forum post.
 
+### Configuration
+
+Make sure that configuration variables are correct. If you run your local epoch node with docker-compose as described above you only need to change `keypair` with public and secret keys belonging to the account you generated.
+
+```javascript
+export default {
+  // URL of the API
+  url: 'http://localhost:3001',
+  // URL of the internal API
+  internalUrl: 'http://localhost:3001/internal',
+  // URL of state channels endpoint
+  channelUrl: 'ws://localhost:3001',
+  // Network ID
+  networkId: 'ae_docker',
+  // Public and secret keys of the client
+  keypair: {
+    publicKey: 'ak_24RZkzfKAQCxMD66shsbEUVEbQ3inU45Gu3j3VCSgF7GwNbZaU',
+    secretKey: 'd549faca2aa008dc0d5e99268c613d29c5a23c809795ca1b88d6a6e5fe716c778b783a6b93d1f1686dfaae3f25a539799246fe0e469a11250fba02c749055c08'
+  },
+  // Deposit required to start the game (0.1 AE)
+  deposit: 100000000000000000,
+  // Reward for winning the game (0.005 AE)
+  reward:  5000000000000000
+}
+```
 
 ## Installation and Running
 
@@ -57,8 +81,10 @@ yarn run build
 
 3. Run game
 
+(Make sure that you provided public and secret keys in environment variables)
+
 ```
-SECRET_KEY PUBLIC_KEY yarn run start:dev
+SECRET_KEY=... PUBLIC_KEY=... yarn run start:dev
 ```
 
 ### Expected Output
