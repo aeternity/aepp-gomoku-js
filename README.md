@@ -30,7 +30,7 @@ In case you want to see a **video tutorial**, how to run an æternity Node on ma
 
 The minimum requirement for being able to play the Gomuku game are two. One account will be for the client and one for the server. In case you still haven't got any æternity account, go to [TUTORIAL: How to Create an æternity Account With CLI?](https://dev.aepps.com/tutorials/account-creation-in-ae-cli.html)
 
-After setting up both accounts you need to replace the public key and private key in src/config.js with keys belonging to one of the accounts (client or server).
+After setting up both accounts you need to replace the public key and private key in `src/config.js` with keys belonging to one of the accounts (client or server).
 
 
 ### ættos
@@ -39,7 +39,7 @@ Make sure that you've at least 200000000000000000 ættos (0.2 AE) on each accoun
 
 ### Configuration
 
-Make sure that configuration variables are correct. If you run your local epoch node with docker-compose as described above you only need to change `keypair` with public and secret keys belonging to the account you generated.
+Make sure that configuration variables in `src/config.js` are correct. If you run your local epoch node with docker-compose as described above you only need to change `keypair` with public and secret keys belonging to the account you generated.
 
 ```javascript
 export default {
