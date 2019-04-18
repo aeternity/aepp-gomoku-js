@@ -21,7 +21,7 @@ Before starting to set up the game you need to run an Epoch node on port ```3001
 ````
 git clone https://github.com/aeternity/epoch.git
 cd epoch
-IMAGE_TAG=v2.0.0 docker-compose up -d
+IMAGE_TAG=v2.2.0 docker-compose up -d
 ````
 
 In case you want to see a **video tutorial**, how to run an æternity Node on macOS Mojave, please feel free to watch it [here](https://youtu.be/J3Ai97eS6Bo).
