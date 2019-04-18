@@ -65,18 +65,18 @@ export default {
 
 ## Installation and Running
 
-In order to make this Gomuku Game running, you need to install and run yarn, a package manager for JavaScript.
+In order to make this Gomuku Game running, you need to install and run npm, a package manager for JavaScript.
 
-1. Install yarn
+1. Install dependencies
  
 ```
-yarn install
+npm install
 ```
 
-2. Build yarn
+2. Build game
 
 ```
-yarn run build
+npm run build
 ```
 
 3. Run game
@@ -84,7 +84,7 @@ yarn run build
 (Make sure that you provided public and secret keys in environment variables)
 
 ```
-SECRET_KEY=... PUBLIC_KEY=... yarn run start:dev
+SECRET_KEY=... PUBLIC_KEY=... npm run start:dev
 ```
 
 ### Expected Output
@@ -97,7 +97,7 @@ You can **check logs** in chrome dev tools with ```CMD+OPTION+J```.
 
 ### Unexpected Error Output
 
-In case you see this error outpot below, simply run ```yarn run start:dev``` again.
+In case you see this error outpot below, simply run ```npm run start:dev``` again.
 
 ```
 /Users/testuser/Desktop/dev/aepp-gomoku/src/gomoku/AppModel.js:3

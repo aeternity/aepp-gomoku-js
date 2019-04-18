@@ -22,14 +22,14 @@
             <div class="flex">
               <ae-identicon :address="initiatorAddress" />
               <div class="ml-2 mt-2 text-left">
-                <ae-amount v-bind:value="initiatorAmount" unit="Æ" />
+                <ae-amount v-bind:value="(initiatorAmount / 1000000000000000000).toFixed(4)" unit="Æ" />
               </div>
             </div>
           </div>
           <div class="w-1/2">
             <div class="flex justify-end">
               <div class="mr-2 mt-2 text-left">
-                <ae-amount v-bind:value="responderAmount" unit="Æ" />
+                <ae-amount v-bind:value="(responderAmount / 1000000000000000000).toFixed(4)" unit="Æ" />
               </div>
               <ae-identicon :address="responderAddress" />
             </div>
