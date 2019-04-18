@@ -56,27 +56,27 @@ export default {
     publicKey: 'ak_24RZkzfKAQCxMD66shsbEUVEbQ3inU45Gu3j3VCSgF7GwNbZaU',
     secretKey: 'd549faca2aa008dc0d5e99268c613d29c5a23c809795ca1b88d6a6e5fe716c778b783a6b93d1f1686dfaae3f25a539799246fe0e469a11250fba02c749055c08'
   },
-  // Deposit required to start the game (0.1 AE)
-  deposit: 100000000000000000,
-  // Reward for winning the game (0.005 AE)
-  reward:  5000000000000000
+  // Deposit required to start the game (1 AE)
+  deposit: 1000000000000000000,
+  // Reward for winning the game (0.05 AE)
+  reward:  50000000000000000
 }
 ```
 
 ## Installation and Running
 
-In order to make this Gomuku Game running, you need to install and run yarn, a package manager for JavaScript.
+In order to make this Gomuku Game running, you need to install and run npm, a package manager for JavaScript.
 
-1. Install yarn
+1. Install dependencies
  
 ```
-yarn install
+npm install
 ```
 
-2. Build yarn
+2. Build game
 
 ```
-yarn run build
+npm run build
 ```
 
 3. Run game
@@ -84,7 +84,7 @@ yarn run build
 (Make sure that you provided public and secret keys in environment variables)
 
 ```
-SECRET_KEY=... PUBLIC_KEY=... yarn run start:dev
+SECRET_KEY=... PUBLIC_KEY=... npm run start:dev
 ```
 
 ### Expected Output
@@ -97,7 +97,7 @@ You can **check logs** in chrome dev tools with ```CMD+OPTION+J```.
 
 ### Unexpected Error Output
 
-In case you see this error outpot below, simply run ```yarn run start:dev``` again.
+In case you see this error outpot below, simply run ```npm run start:dev``` again.
 
 ```
 /Users/testuser/Desktop/dev/aepp-gomoku/src/gomoku/AppModel.js:3

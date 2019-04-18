@@ -17,12 +17,6 @@ var AppController = function(model, view, channel, sendMessage) {
       AppController.click
     )
     AppController.newGame(2)
-    AppController.view.inputNewGameX.onclick = function() {
-      AppController.newGame(1)
-    }
-    AppController.view.inputNewGameO.onclick = function() {
-      AppController.newGame(2)
-    }
 
     AppController.channel.on('message', ({ info }) => {
       const message = JSON.parse(info)
@@ -69,7 +63,8 @@ var AppController = function(model, view, channel, sendMessage) {
     AppController.moveUser()
   }
 
-  this.init()
+  // this.init()
+  AppController.view.renderBoard()
 }
 
 export default AppController
