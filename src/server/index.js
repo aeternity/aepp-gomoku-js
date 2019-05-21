@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import { Channel, Universal, TxBuilder } from '@aeternity/aepp-sdk'
+
 import Model from '../gomoku/AppModel'
 import config from '../config'
 
@@ -37,7 +38,8 @@ const { unpackTx } = TxBuilder
       ttl: 1000,
       host: 'localhost',
       port: 3333,
-      lockPeriod: 10
+      lockPeriod: 10,
+      minimumDepth: 0
     }
     let initiatorAmount = config.deposit
     let responderAmount = config.deposit

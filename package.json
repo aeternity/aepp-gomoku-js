@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@aeternity/aepp-components": "git+https://github.com/aeternity/aepp-components.git#develop",
-    "@aeternity/aepp-sdk": "^3.0.0",
+    "@aeternity/aepp-sdk": "^3.3.0",
     "axios": "^0.18.0",
     "cors": "^2.8.5",
     "vue": "^2.6.8",
