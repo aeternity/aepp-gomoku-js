@@ -110,7 +110,7 @@ export default {
     this.channel = await Channel({
       ...sharedParams,
       role: 'responder',
-      sign: (tag, tx) => {
+      sign: (tag, tx, { updates } = {}) => {
         const { txType, tx: txData } = unpackTx(tx)
         if (tag === 'responder_sign') {
           if (
@@ -123,10 +123,11 @@ export default {
         }
         if (tag === 'update_ack') {
           if (
-            txData.updates.length === 1 &&
-            txData.updates[0].tx.from === sharedParams.responderId &&
-            txData.updates[0].tx.to === sharedParams.initiatorId &&
-            Number(txData.updates[0].tx.amount) === config.reward &&
+            updates &&
+            updates.length === 1 &&
+            updates[0].from === sharedParams.responderId &&
+            updates[0].to === sharedParams.initiatorId &&
+            Number(updates[0].amount) === config.reward &&
             model.winner() === 2
           ) {
             return this.client.signTransaction(tx)
