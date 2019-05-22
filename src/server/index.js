@@ -1,6 +1,9 @@
+import fs from 'fs'
+import path from 'path'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import https from 'https'
 import { Channel, Universal, TxBuilder } from '@aeternity/aepp-sdk'
 
 import Model from '../gomoku/AppModel'
@@ -24,6 +27,16 @@ const { unpackTx } = TxBuilder
   const app = express()
   app.use(bodyParser.json())
   app.use(cors())
+  app.use(express.static('public'))
+
+  app.get('/', (req, res) => {
+    res.sendFile('index.html', {
+      root: path.resolve(__dirname, 'public'),
+      headers: {
+        'Content-Type': 'text/html'
+      }
+    })
+  })
 
   app.post('/start/:pubkey', async (req, res) => {
     let model
@@ -122,7 +135,10 @@ const { unpackTx } = TxBuilder
     res.json(sharedParams)
   })
 
-  app.listen(PORT, () =>
+  https.createServer({
+    key: fs.readFileSync(process.env.HTTPS_KEY_FILE || './server.key'),
+    cert: fs.readFileSync(process.env.HTTPS_CERT_FILE || './server.crt')
+  }, app).listen(PORT, () =>
     console.log(`Gomoku server listening on port ${PORT}`)
   )
 })()
