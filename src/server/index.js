@@ -10,6 +10,7 @@ import Model from '../gomoku/AppModel'
 import config from '../config'
 
 const PORT = process.env.PORT || 9000
+const ASSETS_PATH = path.resolve(process.cwd(), process.env.DIST_PATH || '', 'public')
 
 const { unpackTx } = TxBuilder
 
@@ -27,11 +28,11 @@ const { unpackTx } = TxBuilder
   const app = express()
   app.use(bodyParser.json())
   app.use(cors())
-  app.use(express.static('public'))
+  app.use(express.static(ASSETS_PATH))
 
   app.get('/', (req, res) => {
     res.sendFile('index.html', {
-      root: path.resolve(__dirname, 'public'),
+      root: ASSETS_PATH,
       headers: {
         'Content-Type': 'text/html'
       }
@@ -135,10 +136,16 @@ const { unpackTx } = TxBuilder
     res.json(sharedParams)
   })
 
-  https.createServer({
-    key: fs.readFileSync(process.env.HTTPS_KEY_FILE || './server.key'),
-    cert: fs.readFileSync(process.env.HTTPS_CERT_FILE || './server.crt')
-  }, app).listen(PORT, () =>
-    console.log(`Gomoku server listening on port ${PORT}`)
-  )
+  if (process.env.HTTPS_KEY_FILE && process.env.HTTPS_CERT_FILE) {
+    https.createServer({
+      key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
+      cert: fs.readFileSync(process.env.HTTPS_CERT_FILE)
+    }, app).listen(PORT, () =>
+      console.log(`Gomoku server listening on port ${PORT}`)
+    )
+  } else {
+    app.listen(PORT, () =>
+      console.log(`Gomoku server listening on port ${PORT}`)
+    )
+  }
 })()

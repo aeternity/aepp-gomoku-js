@@ -103,7 +103,9 @@ export default {
     const model = new AppModel()
     const view = new AppView(model)
     const { data: sharedParams } = await axios.post(
-      `/start/${await this.client.address()}`
+      window.location.hostname === 'localhost'
+      ? `//localhost:9000/start/${await this.client.address()}`
+      : `/start/${await this.client.address()}`
     )
     this.initiatorAddress = sharedParams.initiatorId
     this.responderAddress = sharedParams.responderId
