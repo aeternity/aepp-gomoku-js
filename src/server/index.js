@@ -1,11 +1,16 @@
+import fs from 'fs'
+import path from 'path'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import https from 'https'
 import { Channel, Universal, TxBuilder } from '@aeternity/aepp-sdk'
+
 import Model from '../gomoku/AppModel'
 import config from '../config'
 
 const PORT = process.env.PORT || 9000
+const ASSETS_PATH = path.resolve(process.cwd(), process.env.DIST_PATH || '', 'public')
 
 const { unpackTx } = TxBuilder
 
@@ -23,6 +28,16 @@ const { unpackTx } = TxBuilder
   const app = express()
   app.use(bodyParser.json())
   app.use(cors())
+  app.use(express.static(ASSETS_PATH))
+
+  app.get('/', (req, res) => {
+    res.sendFile('index.html', {
+      root: ASSETS_PATH,
+      headers: {
+        'Content-Type': 'text/html'
+      }
+    })
+  })
 
   app.post('/start/:pubkey', async (req, res) => {
     let model
@@ -37,7 +52,8 @@ const { unpackTx } = TxBuilder
       ttl: 1000,
       host: 'localhost',
       port: 3333,
-      lockPeriod: 10
+      lockPeriod: 10,
+      minimumDepth: 0
     }
     let initiatorAmount = config.deposit
     let responderAmount = config.deposit
@@ -120,7 +136,16 @@ const { unpackTx } = TxBuilder
     res.json(sharedParams)
   })
 
-  app.listen(PORT, () =>
-    console.log(`Gomoku server listening on port ${PORT}`)
-  )
+  if (process.env.HTTPS_KEY_FILE && process.env.HTTPS_CERT_FILE) {
+    https.createServer({
+      key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
+      cert: fs.readFileSync(process.env.HTTPS_CERT_FILE)
+    }, app).listen(PORT, () =>
+      console.log(`Gomoku server listening on port ${PORT}`)
+    )
+  } else {
+    app.listen(PORT, () =>
+      console.log(`Gomoku server listening on port ${PORT}`)
+    )
+  }
 })()

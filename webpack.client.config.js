@@ -20,6 +20,9 @@ class TailwindExtractor {
 module.exports = {
   mode: process.env.NODE_ENV === 'prod' ? 'production' : 'development',
   entry: './src/client/index.js',
+  output: {
+    path: path.resolve(__dirname, 'dist/public')
+  },
   resolve: {
     alias: {
       // use this if you are installing the SDK as dependency

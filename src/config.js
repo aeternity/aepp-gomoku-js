@@ -1,12 +1,12 @@
 export default {
   // URL of the API
-  url: 'http://localhost:3001',
+  url: 'https://sdk-testnet.aepps.com',
   // URL of the internal API
-  internalUrl: 'http://localhost:3001/internal',
+  internalUrl: 'https://sdk-testnet.aepps.com/internal',
   // URL of state channels endpoint
-  channelUrl: 'ws://localhost:3001',
+  channelUrl: 'wss://sdk-testnet.aepps.com/channel',
   // Network ID
-  networkId: 'ae_docker',
+  networkId: 'ae_uat',
   // Public and secret keys of the client
   keypair: {
     publicKey: 'ak_24RZkzfKAQCxMD66shsbEUVEbQ3inU45Gu3j3VCSgF7GwNbZaU',
