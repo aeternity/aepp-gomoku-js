@@ -2,6 +2,14 @@
   <ae-main>
     <div class="flex-col content-center min-h-screen">
       <div class="mx-auto w-full text-center">
+        <ae-backdrop v-if="failedToConnectToTheWallet">
+          <ae-text weight="bold" face="mono-xl" style="color: #f03c6e;">!</ae-text>
+          <ae-text weight="bold" style="color: #f03c6e;">Can't connect to the wallet</ae-text>
+        </ae-backdrop>
+        <ae-backdrop v-if="wrongNetworkId">
+          <ae-text weight="bold" face="mono-xl" style="color: #f03c6e;">!</ae-text>
+          <ae-text weight="bold" style="color: #f03c6e;">Must be connected to testnet</ae-text>
+        </ae-backdrop>
         <ae-backdrop v-if="isOpeningChannel">
           <div class="mb-2">
             <ae-loader />
@@ -67,6 +75,8 @@ export default {
     return {
       isOpeningChannel: true,
       isClosingChannel: false,
+      failedToConnectToTheWallet: false,
+      wrongNetworkId: false,
       isPlaying: false,
       isClosed: false,
       initiatorAddress: '',
@@ -99,7 +109,19 @@ export default {
     }
   },
   async mounted () {
-    this.client = await Aepp()
+    try {
+      this.client = await Aepp()
+    } catch (err) {
+      this.failedToConnectToTheWallet = true
+      this.isOpeningChannel = false
+      return null
+    }
+    const networkId = await this.client.getNetworkId()
+    if (networkId !== 'ae_uat') {
+      this.wrongNetworkId = true
+      this.isOpeningChannel = false
+      return null
+    }
     const model = new AppModel()
     const view = new AppView(model)
     const { data: sharedParams } = await axios.post(
