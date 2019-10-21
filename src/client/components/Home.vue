@@ -17,6 +17,12 @@
         <ae-backdrop v-if="isClosed">
           <ae-text weight="bold">State channel closed</ae-text>
         </ae-backdrop>
+        <ae-backdrop v-if="walletError">
+          <div class="mb-2">
+            <ae-text weight="bold" fill="primary" face="mono-xl">!</ae-text>
+          </div>
+          <ae-text weight="bold" fill="primary">Couldn't connect to the wallet</ae-text>
+        </ae-backdrop>
         <div class="flex my-4">
           <div class="w-1/2">
             <div class="flex">
@@ -67,6 +73,7 @@ export default {
     return {
       isOpeningChannel: true,
       isClosingChannel: false,
+      walletError: null,
       isPlaying: false,
       isClosed: false,
       initiatorAddress: '',
@@ -99,7 +106,13 @@ export default {
     }
   },
   async mounted () {
-    this.client = await Aepp()
+    try {
+      this.client = await Aepp()
+    } catch(err) {
+      this.isOpeningChannel = false
+      this.walletError = err
+      return
+    }
     const model = new AppModel()
     const view = new AppView(model)
     const { data: sharedParams } = await axios.post(
