@@ -152,6 +152,8 @@ export default {
     })
     this.channel.on('statusChanged', (status) => {
       if (status === 'open') {
+        this.controller = new AppController(model, view, this.channel, sendMessage)
+        this.controller.init()
         this.isOpeningChannel = false
         this.isPlaying = true
       }
@@ -166,8 +168,6 @@ export default {
     const sendMessage = (message) => {
       this.channel.sendMessage(message, sharedParams.initiatorId)
     }
-    this.controller = new AppController(model, view, this.channel, sendMessage)
-    this.controller.init()
   }
 }
 </script>
